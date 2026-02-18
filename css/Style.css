@@ -194,68 +194,60 @@ footer {
     color: #555;
     border-top: 1px solid #ddd;
 }
-/* Skills Section */
-#skills {
-    background: #f8fafc;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(32, 121, 199, 0.06);
-    padding: 40px 20px 30px 20px;
-    margin-bottom: 60px;
-}
-
 .skills-container {
-    display: flex;
-    gap: 32px;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
     margin-top: 20px;
 }
 
 .skill-category {
-    background: #fff;
-    border: 1px solid #e3e8ee;
+    background: #f9f9f9;
+    padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(32, 121, 199, 0.04);
-    padding: 24px 32px;
-    min-width: 220px;
-    flex: 1 1 220px;
-    max-width: 300px;
-    transition: box-shadow 0.2s;
+    border-left: 4px solid #2079c7;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .skill-category:hover {
-    box-shadow: 0 4px 16px rgba(32, 121, 199, 0.10);
-    border-color: #2079c7;
+    box-shadow: 0 4px 16px rgba(32, 121, 199, 0.15);
+    transform: translateY(-3px);
 }
 
 .skill-category h3 {
     color: #2079c7;
-    font-size: 1.15em;
-    text-shadow: 0 1px 2px #e3e8ee;
-    letter-spacing: 1px;
-    margin-bottom: 14px;
-    letter-spacing: 0.5px;
-    text-align: center;
-    border-bottom: 1px solid #e3e8ee;
-    padding-bottom: 8px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
 }
 
 .skill-category ul {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding-left: 0;
 }
 
-.skill-category ul li {
+.skill-category li {
     padding: 8px 0;
-    border-bottom: 1px solid #f0f4f8;
-    color: #222;
-    font-size: 1em;
-    text-align: center;
+    color: #444;
+    position: relative;
+    padding-left: 20px;
 }
 
-.skill-category ul li:last-child {
-    border-bottom: none;
+.skill-category li:before {
+    content: "▸";
+    color: #2079c7;
+    position: absolute;
+    left: 0;
 }
 
+.contact-info a {
+    color: #2079c7;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
 
+.contact-info a:hover {
+    color: #1a62a1;
+}
