@@ -3,30 +3,30 @@
 <rss version="2.0">
 <channel>
   <title>Oliver Herrick | ITWS Labs</title>
-  <link>herriorpi.eastus.cloudapp.azure.com/index.html</link>
+  <link>herriorpi.eastus.cloudapp.azure.com/iit/index.html</link>
   <description>A collection of my lab work for Intro to ITWS.</description>
   
   <item>
     <title>Lab 1: Intro</title>
-    <link>herriorpi.eastus.cloudapp.azure.com/Labs/Labs.html</link>
+    <link>herriorpi.eastus.cloudapp.azure.com/iit/Labs/Labs.html</link>
     <description>Setting up a personal server.</description>
   </item>
 
   <item>
     <title>Lab 2: Resume</title>
-    <link>herriorpi.eastus.cloudapp.azure.com/Labs/herrio-OliverHerrick-resume.html</link>
+    <link>herriorpi.eastus.cloudapp.azure.com/iit/Labs/herrio-OliverHerrick-resume.html</link>
     <description>Developing an HTML resume with external CSS styling.</description>
   </item>
   
   <item>
     <title>Lab 3: Web Design</title>
-    <link>herriorpi.eastus.cloudapp.azure.com/Labs/Labs.html</link>
+    <link>herriorpi.eastus.cloudapp.azure.com/iit/Labs/Labs.html</link>
     <description>Continuing website development and styling.</description>
   </item>
   
   <item>
     <title>Lab 4: XML</title>
-    <link>herriorpi.eastus.cloudapp.azure.com/Labs/lab4.html</link>
+    <link>herriorpi.eastus.cloudapp.azure.com/iit/Labs/lab4.html</link>
     <description>Creating a valid RSS feed for the website.</description>
   </item>
 </channel>
