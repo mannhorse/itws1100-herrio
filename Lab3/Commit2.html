@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oliver Herrick - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #666;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        nav {
+            background-color: #555;
+            padding: 0;
+            text-align: center;
+            border-bottom: 3px solid #333;
+        }
+
+        nav a {
+            display: inline-block;
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: background-color 0.3s;
+            border-right: 1px solid #666;
+        }
+
+        nav a:last-child {
+            border-right: none;
+        }
+
+        nav a:hover {
+            background-color: #777;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content {
+            background-color: #fff;
+            padding: 30px;
+            margin: 20px 0;
+            border: 2px solid #999;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 3px solid #555;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .about-text {
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .labs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .lab-item {
+            background-color: #f9f9f9;
+            border: 2px solid #ccc;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .lab-item h3 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        .lab-item p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .contact-form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 2px solid #ccc;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #999;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 12px 30px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            border: 2px solid #555;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+            border-top: 5px solid #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Oliver Herrick</h1>
+        <p>Web Developer & Computer Science Student</p>
+    </header>
+
+    <nav>
+        <a href="#" onclick="showPage('about')">About Me</a>
+        <a href="#" onclick="showPage('labs')">Labs</a>
+        <a href="#" onclick="showPage('contact')">Contact</a>
+    </nav>
+
+    <div class="container">
+        <!-- About Page -->
+        <div id="about" class="content active">
+            <h2>About Me</h2>
+            <div class="about-text">
+                <p>Hello! I'm Oliver Herrick, a computer science student passionate about web development and software engineering. I enjoy creating clean, functional websites and exploring new technologies.</p>
+                <p>Through my coursework and projects, I've developed strong skills in HTML, CSS, and JavaScript. I believe in writing efficient code and creating user-friendly experiences.</p>
+                <p>When I'm not coding, I enjoy learning about new frameworks and staying up-to-date with industry trends.</p>
+            </div>
+        </div>
+
+        <!-- Labs Page -->
+        <div id="labs" class="content hidden">
+            <h2>Labs & Projects</h2>
+            <div class="labs-grid">
+                <div class="lab-item">
+                    <h3>Lab 1</h3>
+                    <p>First laboratory project exploring fundamental concepts in web development and programming basics.</p>
+                </div>
+                <div class="lab-item">
+                    <h3>Lab 2</h3>
+                    <p>Intermediate project building upon foundational knowledge with more complex HTML and CSS implementations.</p>
+                </div>
+                <div class="lab-item">
+                    <h3>Lab 3</h3>
+                    <p>Advanced laboratory work demonstrating proficiency in web design and interactive elements.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact" class="content hidden">
+            <h2>Contact Me</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Oliver Herrick. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.content');
+            pages.forEach(page => page.classList.remove('active'));
+            pages.forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+    }
+
+    header {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 5px solid #f093fb;
+    }
+
+    header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+
+    nav {
+        background-color: #f093fb;
+        padding: 0;
+        text-align: center;
+        border-bottom: 3px solid #667eea;
+    }
+
+    nav a {
+        display: inline-block;
+        color: #fff;
+        text-decoration: none;
+        padding: 15px 20px;
+        transition: background-color 0.3s;
+        border-right: 1px solid #667eea;
+    }
+
+    nav a:last-child {
+        border-right: none;
+    }
+
+    nav a:hover {
+        background-color: #667eea;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .content {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 30px;
+        margin: 20px 0;
+        border: 3px solid #667eea;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .active {
+        display: block;
+    }
+
+    h2 {
+        color: #667eea;
+        border-bottom: 3px solid #f093fb;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+
+    .about-text {
+        line-height: 1.8;
+        margin-bottom: 15px;
+    }
+
+    .labs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .lab-item {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 2px solid #f093fb;
+        padding: 15px;
+        text-align: center;
+        color: #fff;
+        border-radius: 8px;
+    }
+
+    .lab-item h3 {
+        color: #fff;
+        margin-bottom: 10px;
+    }
+
+    .lab-item p {
+        color: #f5f7fa;
+        font-size: 0.9em;
+    }
+
+    .contact-form {
+        background-color: #fff;
+        padding: 20px;
+        border: 2px solid #667eea;
+        border-radius: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #667eea;
+        font-family: Arial, sans-serif;
+        border-radius: 4px;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    button {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 12px 30px;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        transition: transform 0.3s;
+        border-radius: 4px;
+    }
+
+    button:hover {
+        transform: scale(1.05);
+    }
+
+    footer {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        text-align: center;
+        padding: 15px;
+        margin-top: 30px;
+        border-top: 5px solid #f093fb;
+        font-size: 0.9em;
+    }
+</style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oliver Herrick - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #ffd700;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        nav {
+            background-color: #ffd700;
+            padding: 0;
+            text-align: center;
+            border-bottom: 3px solid #1e3c72;
+        }
+
+        nav a {
+            display: inline-block;
+            color: #1e3c72;
+            text-decoration: none;
+            padding: 15px 20px;
+            transition: background-color 0.3s;
+            border-right: 1px solid #1e3c72;
+            font-weight: bold;
+        }
+
+        nav a:last-child {
+            border-right: none;
+        }
+
+        nav a:hover {
+            background-color: #ffed4e;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .content {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e0f0ff 100%);
+            padding: 30px;
+            margin: 20px 0;
+            border: 3px solid #2a5298;
+            box-shadow: 0 8px 32px rgba(42, 82, 152, 0.3);
+            border-radius: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h2 {
+            color: #1e3c72;
+            border-bottom: 3px solid #ffd700;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .about-text {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .labs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .lab-item {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border: 2px solid #ffd700;
+            padding: 15px;
+            text-align: center;
+            color: #fff;
+            border-radius: 8px;
+        }
+
+        .lab-item h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .lab-item p {
+            color: #e0f0ff;
+            font-size: 0.9em;
+        }
+
+        .contact-form {
+            background-color: #fff;
+            padding: 20px;
+            border: 2px solid #2a5298;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #2a5298;
+            font-family: Arial, sans-serif;
+            border-radius: 4px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        button {
+            background: linear-gradient(90deg, #2a5298 0%, #1e3c72 100%);
+            color: #ffd700;
+            padding: 12px 30px;
+            border: 2px solid #ffd700;
+            cursor: pointer;
+            font-size: 1em;
+            transition: transform 0.3s;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        footer {
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+            border-top: 5px solid #ffd700;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Oliver Herrick</h1>
+        <p>Web Developer & Computer Science Student</p>
+    </header>
+
+    <nav>
+        <a href="#" onclick="showPage('about')">About Me</a>
+        <a href="#" onclick="showPage('labs')">Labs</a>
+        <a href="#" onclick="showPage('contact')">Contact</a>
+    </nav>
+
+    <div class="container">
+        <!-- About Page -->
+        <div id="about" class="content active">
+            <h2>About Me</h2>
+            <div class="about-text">
+                <p>Hello! I'm Oliver Herrick, a computer science student passionate about web development and software engineering. I enjoy creating clean, functional websites and exploring new technologies.</p>
+                <p>Through my coursework and projects, I've developed strong skills in HTML, CSS, and JavaScript. I believe in writing efficient code and creating user-friendly experiences.</p>
+                <p>When I'm not coding, I enjoy learning about new frameworks and staying up-to-date with industry trends.</p>
+            </div>
+        </div>
+
+        <!-- Labs Page -->
+        <div id="labs" class="content hidden">
+            <h2>Labs & Projects</h2>
+            <div class="labs-grid">
+                <div class="lab-item">
+                    <h3>Lab 1</h3>
+                    <p>First laboratory project exploring fundamental concepts in web development and programming basics.</p>
+                </div>
+                <div class="lab-item">
+                    <h3>Lab 2</h3>
+                    <p>Intermediate project building upon foundational knowledge with more complex HTML and CSS implementations.</p>
+                </div>
+                <div class="lab-item">
+                    <h3>Lab 3</h3>
+                    <p>Advanced laboratory work demonstrating proficiency in web design and interactive elements.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Page -->
+        <div id="contact" class="content hidden">
+            <h2>Contact Me</h2>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Oliver Herrick. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.content');
+            pages.forEach(page => page.classList.remove('active'));
+            pages.forEach(page => page.classList.add('hidden'));
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

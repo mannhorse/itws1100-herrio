@@ -1,7 +1,165 @@
-<html>
-  <head>
-  </head>
-  <body>
-    <p>Hello World!</p>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Oliver Herrick | Home</title>
+   <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+   <nav>
+      <div class="logo">Oliver Herrick</div>
+      <div class="menu-toggle">☰</div>
+      <ul class="nav-menu">
+         <li><a href="index.html">Home</a></li>
+         <li><a href="Labs/Labs.html">Labs</a></li>
+         <li><a href="#about">About</a></li>
+         <li><a href="#contact">Contact</a></li>
+      </ul>
+   </nav>
+
+   <style>
+      .menu-toggle {
+         display: none;
+         font-size: 1.5rem;
+         cursor: pointer;
+         color: #333;
+      }
+
+      @media (max-width: 768px) {
+         .menu-toggle {
+            display: block;
+         }
+
+         nav ul {
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            gap: 0;
+         }
+
+         nav ul.active {
+            display: flex;
+         }
+
+         nav ul li {
+            width: 100%;
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            animation: slideDown 0.3s ease forwards;
+         }
+
+         nav ul li:nth-child(1) { animation-delay: 0ms; }
+         nav ul li:nth-child(2) { animation-delay: 75ms; }
+         nav ul li:nth-child(3) { animation-delay: 150ms; }
+         nav ul li:nth-child(4) { animation-delay: 225ms; }
+
+         nav ul li:last-child {
+            border-bottom: none;
+         }
+
+         @keyframes slideDown {
+            from {
+               opacity: 0;
+               transform: translateY(-10px);
+            }
+            to {
+               opacity: 1;
+               transform: translateY(0);
+            }
+         }
+      }
+   </style>
+
+   <script>
+      document.querySelector('.menu-toggle').addEventListener('click', function() {
+         document.querySelector('nav ul').classList.toggle('active');
+      });
+
+      document.querySelectorAll('nav ul li a').forEach(link => {
+         link.addEventListener('click', function() {
+            document.querySelector('nav ul').classList.remove('active');
+         });
+      });
+   </script>
+
+   <header class="hero">
+      <h1>Oliver Herrick</h1>
+      <p>Mechanical Engineering Student at RPI</p>
+      <a href="Labs/Labs.html" class="btn">View My Labs</a>
+   </header>
+
+   <main class="container">
+      
+      <section id="about">
+         <h2>About Me</h2>
+         <p>
+            I am a Mechanical Engineering student at Rensselaer Polytechnic Institute (Class of 2028). 
+            I have a background in leadership, receiving the Rensselaer Leadership Award, and working as Chief Lifeguard for the New York State Department of Environmental Conservation.
+         </p>
+      </section>
+
+      <section id="projects">
+         <h2>Featured Projects</h2>
+         <div class="labs-grid">
+            <div class="lab-card">
+               <h3>Lab 2: Resume</h3>
+               <p>A digitally formatted resume using HTML and CSS.</p>
+               <a href="Labs/herrio-OliverHerrick-resume.html">View Resume &rarr;</a>
+            </div>
+         </div>
+      </section>
+
+      <section id="skills">
+         <h2>Skills</h2>
+         <div class="skills-container">
+            <div class="skill-category">
+               <h3>Engineering</h3>
+               <ul>
+                  <li>CAD Design</li>
+                  <li>Mechanical Analysis</li>
+                  <li>Project Management</li>
+               </ul>
+            </div>
+            <div class="skill-category">
+               <h3>Technical</h3>
+               <ul>
+                  <li>HTML & CSS</li>
+                  <li>Web Design</li>
+                  <li>Problem Solving</li>
+               </ul>
+            </div>
+            <div class="skill-category">
+               <h3>Leadership</h3>
+               <ul>
+                  <li>Team Coordination</li>
+                  <li>Safety Management</li>
+                  <li>Training & Mentoring</li>
+               </ul>
+            </div>
+         </div>
+      </section>
+
+      <section id="contact">
+         <h2>Contact</h2>
+         <div class="contact-info">
+             <p><strong>Location:</strong> Lake George, NY</p>
+             <p><strong>Email:</strong> <a href="mailto:Oliverherrick11@gmail.com">Oliverherrick11@gmail.com</a></p>
+             <p><strong>Phone:</strong> (518) 812-6695</p>
+         </div>
+      </section>
+
+   </main>
+
+   <footer>
+      <p>&copy; 2026 Oliver Herrick. Built for Intro to ITWS.</p>
+   </footer>
+
+</body>
 </html>
