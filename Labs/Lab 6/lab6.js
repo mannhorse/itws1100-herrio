@@ -23,7 +23,7 @@ $(document).ready(function () {
    // (note that there is already a class defined for the area where your name should go)
 
    $('h1').click(function () {
-      $('.myName').text('Oliver Herrick');
+      $('.myName').html('Oliver Herrick');
       $('.myName').css('font-variant', 'small-caps');
       $('.myName').css('color', 'green');
       $('.myName').css('font-size', '200%');
@@ -46,7 +46,7 @@ $(document).ready(function () {
    //            When a red list item is clicked change it back (you need to look up the appropriate jQuery method to do this)
    // (Note that there already is a css style named ".red" in lab6.css)
 
-   $('#labList').on('click', 'li', function () {
+   $(document).on('click', 'li', function () {
       if ($(this).hasClass('red')) {
          $(this).removeClass('red');
       } else {
@@ -58,7 +58,7 @@ $(document).ready(function () {
 
 $('#AddListItem').click(function () {
       var count = $('#labList li').length + 1;
-      $('#labList').append('<li>List item ' + count + '</li>');
+      $('#labList').html($('#labList').html() + '<li>List item ' + count + '</li>');
    });
 
    // Problem 5 (10 pts) - what happens when you click on the new li?  Why? (Explain in your readme file)
