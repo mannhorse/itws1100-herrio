@@ -1,0 +1,3 @@
+In this lab I used jQuery to add interactive features to a web page. The features include changing text when clicked, showing and hiding paragraphs with animations, toggling CSS classes, adding new list items, and using .toggle().
+
+Problem 5 - If the .click() is used to set up the toggle feature, new list items don't turn red, only the original items do. When the page loads for the first time the jQuery finds all the list elements that exist and gives them the click behavior. When you add a new item to the list, it does not get the click, so it does not get the behavior. To fix this, I used .on(), and attatched the click to the list. .on() allows me to have an event be attatched to an element, like the whole list, and trigger it when a lesser element is clicked. 
