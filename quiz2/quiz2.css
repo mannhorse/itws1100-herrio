@@ -1,0 +1,10 @@
+/* Quiz 2 CSS File */
+
+body {
+  width: 1000px;
+}
+
+#bodyBlock {
+  width: 700px;
+  margin: auto;
+}
