@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+   <meta charset-utf-8 />
+   <title>Lab 10: Databases and SQL, Intro ITWS</title>
+   <style type="text/css">
+      body {
+         font-family: Arial, Helvetica, sans-serif;
+      }
+
+      #content {
+         margin: 0 auto;
+         padding: 3em 2em;
+         max-width: 800px;
+      }
+
+      h1 {
+         font-size: 1.5em;
+         margin: 0;
+      }
+
+      h2 {
+         font-size: 1.1em;
+         margin-top: 0;
+      }
+
+      h3 {
+         font-size: 1em;
+         margin-top: 0;
+      }
+
+      ol li {
+         margin-bottom: 1em;
+      }
+
+      ul li {
+         margin-bottom: 1em;
+      }
+
+      em {
+         color: green;
+         font-weight: bold;
+      }
+   </style>
+</head>
+
+<body>
+   <div id="content">
+      <h1>Lab 9: Databases &amp; SQL</h1>
+      <h2>Intro ITWS</h2>
+
+      <h3>Import, modify, and export a database</h3>
+
+      <p>
+         We will do much of this together in class.
+      </p>
+
+      <ul>
+         <li>I have provided you with an SQL file with the commands to create an actors table and insert some actors. I
+            have also provided you with a PHP program which has a menu with two tabs. One will add/remove/display
+            actors, however there is no table for the actors. The other is to do the same for movies, and while I have
+            given you the table, I have not given you the code for the movies.php program.</li>
+         <li>In this lab, you are going to complete the program so that we can Add/Remove and display both movies and
+            actors.</li>
+         <!-- <li> -->
+         <h3>Setup</h3>
+         <ul>
+            <li>Download the lab: <em>ITWS1100-LAB9.zip</em> from LMS</li>
+            <li>Create a Lab 10 issue and branch to your repos</li>
+            <li>Switch to the new branch on your local machines</li>
+            <li>Add a lab9 folder to your iit directory (or its equiv)</li>
+            <li>Unzip the lab9 zip file from LMS into your new lab9 folder in your iit directory</li>
+            <li>Start your server</li>
+            <li>ssh into it</li>
+            <li>Fix permissions for the phpmyadmin user</li>
+            <ul>
+               <li>sudo mysql</li>
+               <li>SHOW GRANTS FOR 'phpmyadmin'@'localhost';</li>
+               <li>GRANT ALL ON *.* TO 'phpmyadmin'@'localhost';</li>
+               <li>FLUSH PRIVILEGES;</li>
+               <li>exit</li>
+               <li>sudo service mysql restart</li>
+               <li>sudo service apache2 restart</li>
+            </ul>
+            <li>Using <a href="#">http://[yourFQDN]/iit/phpmyadmin</a>, create a new database named "iit",
+               setting the collation to utf8mb4_general_ci</li>
+            <li>In phpMyAdmin with the "iit" database selected, import lab10/iit-lab10start.sql</li>
+            <br />
+            <li>Commit your code, merge to main, and push it to GitHub (you will do this repeatedly as you test
+               for this lab) pull down and test the sample code.</li>
+            <li>NOTE: You shoud get the actors page with an error because you have not created the Actors table
+               yet, and there is no code to show movies yet</li>
+            <br />
+            <li>Back on your local machine, on the lab 10 branch, start coding.</li>
+            <li>When ready, make sure your server is running, pull your code</li>
+            <li>Test, edit, repeat...</li>
+            <br />
+            <li>NOTE: You must use your Azure servers to complete this lab</li>
+            <li>NOTE: You must have secured your MariaDB (MySQL) server using the tutorial from Lab 1</li>
+            <li>NOTE: You must have installed phpMyAdmin to your Azure server using the tutorial in Lab 1</li>
+            <li>NOTE: Keep the lab9 branch active until you submit your lab as you will be making changes,
+               committing, pushing, merging, and pulling to Azure repeatedly.</li>
+            <!-- </li> -->
+         </ul>
+
+         <h3>Instructions</h3>
+         <ol>
+            <li>
+               Using the create table commands in the <em>iit-lab9start.sql</em> file as guide,
+               create a new table named "actors" in which to store character
+               names of the roles played by our actors. Include four fields, an
+               autoincrement primary key, first, last name and a date of birth (for the characters). <br /><em>Note:
+                  Check the code for the proper naming for the fields.</em>
+            </li>
+            <li>Using phpMyAdmin, add a few actors that you like to the table. </li>
+            <li>
+               Using the insert statements from the <em>iit-lab10start.sql</em> file as a guide, or your new actors
+               program (index.php) on your server, add at least five new actors - not mine - to
+               the actors table. Make sure at least 3 have birthdates
+               prior to 1/1/1960 (the dates may be faked)
+            </li>
+            <li>
+               Using the format of the dates in the actors table as a guide,
+               query the database for all actors born on or after 1960. (Remember to put the date string in single
+               quotes.) Output your results to a CSV file using the "Export" tab in phpMyAdmin after you've made the
+               query. Export the file as "CSV for MS Excel". Name the CSV file "actors.csv" and save it in your
+               lab10/ folder.
+            </li>
+            <li>
+               Using the examples we went over in class from iitajax, create a relationship table for movies and
+               actors, and associate some of your actors to their movies.
+            </li>
+            <li>
+               Using the examples we went over in class, complete the program to list out movies as the example did
+               for actors. <em>Make sure to check the database for field names</em>
+            </li>
+            <li>
+               For extra credit, add a panel (tab) to the program to list out the movies and their corresponding
+               actors.
+            </li>
+            <li>
+               Select "iit" in the left column to select the database.
+               Using the Export tab in phpMyAdmin, export the SQL schema by
+               selecting the SQL radio button in the export box (left column).
+               Save it as iit.sql in your lab9 folder. <em>Check this file to
+                  make sure you have the full schema (not, for example, the
+                  last table you looked at).</em>
+            </li>
+            <li>
+               When you are done,
+               <ul>
+                  <li>commit and push your changes to your repo and pull them to your Azure instance</li>
+                  <li>Zip up your <em>entire</em> iit directory and rename it to <em>lab9-YourName-yourRCSID.zip</em>
+                  </li>
+                  <li>submit your zip file to LMS</li>
+               </ul>
+            </li>
+            <li><strong>This lab is due by midnight on date shown in LMS</strong></li>
+         </ol>
+         </li>
+      </ul>
+
+
+   </div>
+</body>
+
+</html>
