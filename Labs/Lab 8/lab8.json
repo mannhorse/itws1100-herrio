@@ -1,0 +1,40 @@
+{
+   "menuItem": [
+      {
+         "lab": "Lab 1",
+         "title": "Intro",
+         "description": "Setting up a personal server.",
+         "link": "../Lab 1/lab1.html"
+      },
+      {
+         "lab": "Lab 2",
+         "title": "Resume",
+         "description": "Developing an HTML resume with external CSS styling.",
+         "link": "../Lab 2/herrio-OliverHerrick-resume.html"
+      },
+      {
+         "lab": "Lab 4",
+         "title": "XML",
+         "description": "Creating an RSS feed and applying an XML stylesheet.",
+         "link": "../Lab 4/lab4.html"
+      },
+      {
+         "lab": "Lab 5",
+         "title": "JavaScript",
+         "description": "Building interactive elements with vanilla JavaScript.",
+         "link": "../Lab 5/lab5page.html"
+      },
+      {
+         "lab": "Lab 6",
+         "title": "jQuery",
+         "description": "Using jQuery to add interactivity to a web page.",
+         "link": "../Lab 6/lab6page.html"
+      },
+      {
+         "lab": "Lab 8",
+         "title": "Dynamic Menu",
+         "description": "Building a dynamic projects page with JSON and AJAX.",
+         "link": "lab8.html"
+      }
+   ]
+}
