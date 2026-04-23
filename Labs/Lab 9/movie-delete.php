@@ -1,6 +1,7 @@
 <?php
+  include('includes/db.inc.php');
   mysqli_report(MYSQLI_REPORT_OFF);
-  @$db = new mysqli('localhost', 'phpmyadmin', 'Oliverherrick11!', 'iit');
+  @$db = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
 
   if ($db->connect_error) {
     $connectErrors = array(
