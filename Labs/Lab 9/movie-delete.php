@@ -1,5 +1,6 @@
 <?php
-  @$db = new mysqli('localhost', 'root', 'root', 'iit');
+  mysqli_report(MYSQLI_REPORT_OFF);
+  @$db = new mysqli('localhost', 'phpmyadmin', 'Oliverherrick11!', 'iit');
 
   if ($db->connect_error) {
     $connectErrors = array(
