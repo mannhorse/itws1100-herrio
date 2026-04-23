@@ -62,11 +62,6 @@ $playerName = '';
 $score      = 0;
 
 if ($havePost) {
-    // VULNERABILITY — XSS (Cross-Site Scripting)
-    // $playerName is never sanitized before being echoed into HTML.
-    // Entering <script>alert('hacked')</script> as a name will execute
-    // that script in every visitor's browser when the leaderboard loads.
-    // Fix: echo htmlspecialchars($playerName, ENT_QUOTES, 'UTF-8') everywhere.
     $playerName = trim($_POST['player_name']);
 
     foreach ($questions as $i => $q) {
@@ -83,17 +78,15 @@ if ($havePost) {
     }
 }
 
-// VULNERABILITY — SQL Injection
-// $search is dropped straight into the query string with no escaping or
-// prepared statement.  Try:  ' OR '1'='1   to dump every row in the table.
-// Fix: use a prepared statement with bind_param() just like the INSERT above.
 $searchResults = null;
 $searchTerm    = '';
 if (isset($_GET['search']) && $dbOk) {
     $searchTerm = $_GET['search'];
-    $searchResults = $db->query(
-        "SELECT player_name, score, submitted_at FROM quiz3_scores WHERE player_name = '$searchTerm'"
-    );
+    $stmt = $db->prepare('SELECT player_name, score, submitted_at FROM quiz3_scores WHERE player_name = ?');
+    $stmt->bind_param('s', $searchTerm);
+    $stmt->execute();
+    $searchResults = $stmt->get_result();
+    $stmt->close();
 }
 ?>
 <!DOCTYPE html>
@@ -112,11 +105,6 @@ if (isset($_GET['search']) && $dbOk) {
     table             { width:100%; border-collapse:collapse; margin-top:8px; }
     th, td            { text-align:left; padding:6px 10px; border-bottom:1px solid #ddd; }
     th                { background:#f0f0f0; font-weight:bold; }
-    .vuln-note        { background:#fff3cd; border-left:4px solid #ffc107; padding:10px 14px;
-                        margin:10px 0; font-size:0.9em; border-radius:3px; }
-    .vuln-note strong { display:block; margin-bottom:4px; }
-    .fix-note         { background:#d4edda; border-left:4px solid #28a745; padding:10px 14px;
-                        margin:4px 0 10px 0; font-size:0.9em; border-radius:3px; }
     input[type=submit], button[type=submit] {
                         background:#2079c7; color:#fff; border:none; padding:10px 26px;
                         cursor:pointer; font-size:1em; border-radius:4px; margin-top:8px; }
@@ -125,6 +113,23 @@ if (isset($_GET['search']) && $dbOk) {
     code              { background:#eee; padding:1px 4px; border-radius:3px; font-size:0.95em; }
     h2                { margin-top:30px; }
   </style>
+  <script>
+    function validateQuiz(form) {
+      if (form.player_name.value.trim() === '') {
+        alert('Please enter your name before submitting.');
+        form.player_name.focus();
+        return false;
+      }
+      var total = <?php echo count($questions); ?>;
+      for (var i = 0; i < total; i++) {
+        if (form.querySelectorAll('input[name="q' + i + '"]:checked').length === 0) {
+          alert('Please answer all questions. Question ' + (i + 1) + ' is unanswered.');
+          return false;
+        }
+      }
+      return true;
+    }
+  </script>
 </head>
 <body>
 <div class="quiz-wrap">
@@ -133,26 +138,13 @@ if (isset($_GET['search']) && $dbOk) {
 
   <?php if ($havePost): ?>
   <div class="messages">
-    <!-- XSS: $playerName echoed with no htmlspecialchars() -->
-    <h4>Results for: <?php echo $playerName; ?></h4>
+    <h4>Results for: <?php echo htmlspecialchars($playerName, ENT_QUOTES, 'UTF-8'); ?></h4>
     <p>Score: <strong><?php echo $score; ?> / <?php echo count($questions); ?></strong></p>
-  </div>
-
-  <div class="vuln-note">
-    <strong>XSS — Cross-Site Scripting</strong>
-    The name above is output with <code>echo $playerName</code> and no escaping.
-    Try submitting <code>&lt;script&gt;alert('hacked')&lt;/script&gt;</code> as your name
-    to see it execute in the browser.  The same name is also stored in the database
-    and re-injected into the leaderboard for every future visitor (stored XSS).
-  </div>
-  <div class="fix-note">
-    <strong>Fix:</strong> Use <code>echo htmlspecialchars($playerName, ENT_QUOTES, 'UTF-8')</code>
-    everywhere user-supplied data is written into HTML.
   </div>
   <?php endif; ?>
 
   <h2>Take the Quiz</h2>
-  <form method="post" action="index.php">
+  <form method="post" action="index.php" onsubmit="return validateQuiz(this);">
     <div class="question">
       <label for="player_name"><strong>Your Name:</strong></label>
       <input type="text" name="player_name" id="player_name" size="44"
@@ -177,13 +169,6 @@ if (isset($_GET['search']) && $dbOk) {
 
   <?php if ($dbOk): ?>
   <h2>Leaderboard</h2>
-
-  <div class="vuln-note">
-    <strong>Stored XSS — names are displayed without escaping</strong>
-    Player names are stored as-is and echoed below with no <code>htmlspecialchars()</code>.
-    A malicious name persists in the database and runs for every visitor.
-  </div>
-
   <table>
     <tr><th>#</th><th>Name</th><th>Score</th><th>Submitted</th></tr>
     <?php
@@ -193,8 +178,7 @@ if (isset($_GET['search']) && $dbOk) {
         while ($row = $result->fetch_assoc()) {
             echo '<tr>';
             echo '<td>' . $rank++ . '</td>';
-            // XSS: name stored and displayed without htmlspecialchars()
-            echo '<td>' . $row['player_name'] . '</td>';
+            echo '<td>' . htmlspecialchars($row['player_name'], ENT_QUOTES, 'UTF-8') . '</td>';
             echo '<td>' . (int)$row['score'] . ' / ' . count($questions) . '</td>';
             echo '<td>' . htmlspecialchars($row['submitted_at'], ENT_QUOTES, 'UTF-8') . '</td>';
             echo '</tr>';
@@ -205,19 +189,6 @@ if (isset($_GET['search']) && $dbOk) {
   </table>
 
   <h2>Search Scores</h2>
-
-  <div class="vuln-note">
-    <strong>SQL Injection</strong>
-    The search input is inserted directly into the SQL query with no escaping or
-    prepared statement.  Try entering <code>' OR '1'='1</code> to return every row
-    in the table regardless of the name entered.
-  </div>
-  <div class="fix-note">
-    <strong>Fix:</strong> Replace the raw query string with a prepared statement:
-    <code>$stmt = $db-&gt;prepare("SELECT ... WHERE player_name = ?");</code>
-    then <code>$stmt-&gt;bind_param('s', $searchTerm);</code>
-  </div>
-
   <form method="get" action="index.php">
     <input type="text" name="search" size="30"
            value="<?php echo htmlspecialchars($searchTerm, ENT_QUOTES, 'UTF-8'); ?>"
@@ -232,13 +203,11 @@ if (isset($_GET['search']) && $dbOk) {
     if ($searchResults && $searchResults->num_rows > 0) {
         while ($row = $searchResults->fetch_assoc()) {
             echo '<tr>';
-            // XSS: also unescaped here to show both vulnerabilities together
-            echo '<td>' . $row['player_name'] . '</td>';
+            echo '<td>' . htmlspecialchars($row['player_name'], ENT_QUOTES, 'UTF-8') . '</td>';
             echo '<td>' . (int)$row['score'] . ' / ' . count($questions) . '</td>';
             echo '<td>' . htmlspecialchars($row['submitted_at'], ENT_QUOTES, 'UTF-8') . '</td>';
             echo '</tr>';
         }
-        $searchResults->free();
     } else {
         echo '<tr><td colspan="3">No results found.</td></tr>';
     }
@@ -248,8 +217,7 @@ if (isset($_GET['search']) && $dbOk) {
 
   <?php endif; ?>
 
-</div><!-- /.quiz-wrap -->
-
+</div>
 <footer>Introduction to Information Technology &mdash; Rensselaer Polytechnic Institute</footer>
 </body>
 </html>
