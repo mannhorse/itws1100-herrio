@@ -1,5 +1,5 @@
-/* iit CSS File */ 
-  
+/* iit CSS File */
+
 body {
   font-family: Georgia, Arial, Helvetica, sans-serif;
   color: black;
@@ -76,7 +76,7 @@ h1 {
 fieldset {
   clear: both;
   margin: 0;
-  padding-top: 1em; 
+  padding-top: 1em;
   border: 1px solid #333;
 }
 .field {
@@ -90,7 +90,7 @@ fieldset {
   margin: 0 0 0.5em 0;
 }
 textarea {
-  width: 384px; 
+  width: 384px;
   background-color: #eee;
   color: black;
 }
@@ -126,23 +126,32 @@ th {
 td {
   padding-right: 1em;
 }
-#actorTable {
+#actorTable,
+#movieTable,
+#relationsTable {
   width: 100%;
   border-spacing: 0;
   border: 1px solid #333;
 }
-#actorTable th {
+#actorTable th,
+#movieTable th,
+#relationsTable th {
   background-color: #ddc;
   padding: 2px 4px;
 }
-#actorTable td {
+#actorTable td,
+#movieTable td,
+#relationsTable td {
   padding: 2px 4px;
 }
-#actorTable tr.odd td {
+#actorTable tr.odd td,
+#movieTable tr.odd td,
+#relationsTable tr.odd td {
   background-color: #eed;
   color: black;
 }
-.deleteActor {
+.deleteActor,
+.deleteMovie {
   cursor: pointer;
 }
 .boxedContent {
