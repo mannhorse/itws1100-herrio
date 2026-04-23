@@ -35,7 +35,12 @@ VALUES
    ("Hepburn", "Audrey", "1929-05-04"),
    ("Eastwood", "Clint", "1930-05-31"),
    ("Streep", "Meryl", "1949-06-22"),
-   ("Hanks", "Tom", "1956-07-09");
+   ("Hanks", "Tom", "1956-07-09"),
+   ("Freeman", "Morgan", "1937-06-01"),
+   ("Washington", "Denzel", "1954-12-28"),
+   ("Hopkins", "Anthony", "1937-12-31"),
+   ("DiCaprio", "Leonardo", "1974-11-11"),
+   ("Lawrence", "Jennifer", "1990-08-15");
 
 -- create the movie_actors relationship table
 CREATE TABLE `movie_actors` (
