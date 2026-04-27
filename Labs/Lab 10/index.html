@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Lab 10 - Production Deployment, SSL &amp; Auto-Deploy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Lab 10 &mdash; Production Deployment, SSL &amp; Auto-Deploy</h1>
+  <p><strong>ITWS 1100 &mdash; Intro to IT &amp; Web Science</strong></p>
+  <p>Due: <strong>April 23, 2026 at 11:59 PM</strong> &mdash; 100 points</p>
+
+  <nav class="lab-nav">
+    <a href="index.html" class="active">Overview</a>
+    <a href="part1-deploy.html">1 &middot; Deploy</a>
+    <a href="part2-security.html">2 &middot; Security</a>
+    <a href="part3-ssl.html">3 &middot; SSL</a>
+    <a href="part4-autodeploy.html">4 &middot; Auto-Deploy</a>
+  </nav>
+
+  <div class="overview-box">
+    <h3 style="margin-top:0">What You Will Do</h3>
+    <p>This is the capstone lab. You will deploy your website to production, secure it, encrypt it with HTTPS, and set up
+      automatic deployment from GitHub &mdash; all skills used by professional developers every day.</p>
+    <ul>
+      <li>A live website at <code>https://yourFQDN</code> &mdash; no <code>/iit</code> path</li>
+      <li>SSL/HTTPS encryption via Let&rsquo;s Encrypt</li>
+      <li>Selective password protection on sensitive labs (using your JSON <code>secure</code> flag)</li>
+      <li>Automatic deployment &mdash; push to GitHub, server updates itself</li>
+    </ul>
+  </div>
+
+  <div class="part-cards">
+    <a href="part1-deploy.html" class="part-card">
+      <div class="part-num">Part 1</div>
+      <div class="part-title">Deploy to Production</div>
+      <p class="part-desc">Prepare your code locally, deploy to your Azure VM, set up the landing page redirect, and clean up your repo.</p>
+    </a>
+    <a href="part2-security.html" class="part-card">
+      <div class="part-num">Part 2</div>
+      <div class="part-title">Secure Your Site</div>
+      <p class="part-desc">Reorganize .htaccess to protect specific folders, add the JSON secure flag, and show lock icons on your projects page.</p>
+    </a>
+    <a href="part3-ssl.html" class="part-card">
+      <div class="part-num">Part 3</div>
+      <div class="part-title">SSL / HTTPS</div>
+      <p class="part-desc">Open port 443, install Certbot, get a free Let&rsquo;s Encrypt certificate, and verify auto-renewal.</p>
+    </a>
+    <a href="part4-autodeploy.html" class="part-card">
+      <div class="part-num">Part 4</div>
+      <div class="part-title">Auto-Deploy Workflow</div>
+      <p class="part-desc">Create a GitHub webhook handler, configure sudoers, and set up continuous deployment.</p>
+    </a>
+  </div>
+
+  <h3>Pill Legend</h3>
+  <p>Watch for these badges throughout the lab &mdash; they tell you <em>where</em> to work:</p>
+  <table class="rubric-table">
+    <tr><td><span class="pill pill-ghdesktop">GitHub Desktop</span></td><td>Git actions in the GitHub Desktop app</td></tr>
+    <tr><td><span class="pill pill-local">Local</span></td><td>File operations on your computer (Finder, Explorer, text editor)</td></tr>
+    <tr><td><span class="pill pill-ssh">SSH &bull; Azure VM</span></td><td>Commands on your Azure server via SSH terminal</td></tr>
+    <tr><td><span class="pill pill-browser">Browser</span></td><td>Testing in a web browser</td></tr>
+    <tr><td><span class="pill pill-azure">Azure Portal</span></td><td>Azure management portal</td></tr>
+    <tr><td><span class="pill pill-cli">CLI</span></td><td>Optional command-line equivalent (for reference or power users)</td></tr>
+  </table>
+
+  <hr>
+
+  <h2>Grading Rubric</h2>
+  <table class="rubric-table">
+    <tr><th>Category</th><th>Pts</th><th>Criteria</th><th>Part</th></tr>
+    <tr><td>Landing Page Redirect</td><td>10</td><td>FQDN redirects to homepage via PHP <code>header()</code></td><td><a href="part1-deploy.html">1</a></td></tr>
+    <tr><td>Homepage &amp; Navigation</td><td>10</td><td>Homepage loads. Projects page shows all labs from JSON. Lab 7 links to group project.</td><td><a href="part1-deploy.html">1</a></td></tr>
+    <tr><td>JSON Secure Flag &amp; Lock Icons</td><td>10</td><td>JSON entries have <code>secure</code> field. Projects page shows lock icon for secured labs.</td><td><a href="part2-security.html">2</a></td></tr>
+    <tr><td>Security (.htaccess)</td><td>15</td><td>Lab01 and Lab09 require auth. Unsecured labs load without password. Protected folders match <code>secure: true</code> entries.</td><td><a href="part2-security.html">2</a></td></tr>
+    <tr><td>SSL/HTTPS</td><td>20</td><td>Valid certificate. Padlock in browser. HTTP redirects to HTTPS.</td><td><a href="part3-ssl.html">3</a></td></tr>
+    <tr><td>Auto-Deploy</td><td>20</td><td>Webhook configured. Push to main auto-updates server. HMAC signature verification in place.</td><td><a href="part4-autodeploy.html">4</a></td></tr>
+    <tr><td>Repo Cleanup &amp; README</td><td>10</td><td>No inclass/quiz/zip files. lab10 has README.</td><td><a href="part1-deploy.html">1</a></td></tr>
+    <tr><td>Git Workflow</td><td>5</td><td>Used lab10 branch, merged to main.</td><td><a href="part1-deploy.html">1</a></td></tr>
+    <tr><th>Total</th><th>100</th><th></th><th></th></tr>
+  </table>
+
+  <hr>
+
+  <h2>Using AI as a Tool</h2>
+  <p>Throughout this lab, you&rsquo;re encouraged to use AI coding tools (Claude Code, GitHub Copilot, ChatGPT)
+    to <strong>generate code, debug issues, and learn concepts</strong>. This is how professional developers
+    work &mdash; AI is a tool in your toolkit, just like VS Code or the terminal.</p>
+
+  <h3>How to get good results from AI</h3>
+  <table class="rubric-table">
+    <tr><th>Technique</th><th>Example</th></tr>
+    <tr>
+      <td><strong>Be specific about your environment</strong></td>
+      <td>&ldquo;I&rsquo;m on Ubuntu 22.04 with Apache2&rdquo; &mdash; not just &ldquo;my server&rdquo;</td>
+    </tr>
+    <tr>
+      <td><strong>Include error messages verbatim</strong></td>
+      <td>&ldquo;I get this error: [paste exact text]&rdquo; &mdash; not &ldquo;it doesn&rsquo;t work&rdquo;</td>
+    </tr>
+    <tr>
+      <td><strong>Give it your existing code</strong></td>
+      <td>&ldquo;Here is my current JavaScript file. Modify it to add X.&rdquo;</td>
+    </tr>
+    <tr>
+      <td><strong>Ask it to explain, not just fix</strong></td>
+      <td>&ldquo;Fix this and explain what was wrong so I understand.&rdquo;</td>
+    </tr>
+    <tr>
+      <td><strong>Verify the output</strong></td>
+      <td>Read the generated code. Does it make sense? Test it before deploying.</td>
+    </tr>
+  </table>
+
+  <h3>AI Prompts for Each Part</h3>
+  <table class="rubric-table">
+    <tr><th>Task</th><th>Prompt</th></tr>
+    <tr>
+      <td>Generate the PHP redirect</td>
+      <td><span class="ai-quote">&ldquo;Write a PHP file that does a 302 redirect to /iit/ using header().&rdquo;</span></td>
+    </tr>
+    <tr>
+      <td>Add lock icons to projects page</td>
+      <td><span class="ai-quote">&ldquo;Here is my JS that builds project cards from JSON. Add a lock icon when the secure field is true. [paste code]&rdquo;</span></td>
+    </tr>
+    <tr>
+      <td>Write the deploy webhook</td>
+      <td><span class="ai-quote">&ldquo;Write a PHP GitHub webhook handler that verifies X-Hub-Signature-256 with HMAC, only deploys pushes to main, runs git pull as www-data, and logs results.&rdquo;</span></td>
+    </tr>
+    <tr>
+      <td>Debug Apache errors</td>
+      <td><span class="ai-quote">&ldquo;Apache returns 500 after I moved .htaccess. Here&rsquo;s my error log: [paste]. Fix it.&rdquo;</span></td>
+    </tr>
+    <tr>
+      <td>Debug Certbot</td>
+      <td><span class="ai-quote">&ldquo;Certbot --apache fails with [error]. My FQDN is X, Ubuntu 22.04, port 443 is open. What&rsquo;s wrong?&rdquo;</span></td>
+    </tr>
+    <tr>
+      <td>Azure CLI setup</td>
+      <td><span class="ai-quote">&ldquo;Install Azure CLI on [macOS/Windows]. Show me commands to start/stop/status a VM in resource group student-dtlab.&rdquo;</span></td>
+    </tr>
+  </table>
+
+  <div class="warning">AI-generated code is a <strong>starting point</strong>, not a final answer.
+    Always read what it produces, understand why it works, and test it before deploying to your server.
+    If something doesn&rsquo;t look right, ask the AI to explain it.</div>
+
+  <hr>
+
+  <h2>Quick Reference</h2>
+
+  <h3><span class="pill pill-ghdesktop">GitHub Desktop</span> Actions</h3>
+  <table class="rubric-table">
+    <tr><th>Action</th><th>Where</th></tr>
+    <tr><td>Switch branch</td><td>Branch dropdown (top bar)</td></tr>
+    <tr><td>New branch</td><td>Branch &rarr; New Branch</td></tr>
+    <tr><td>Fetch/pull</td><td>Fetch origin / Pull origin (top bar)</td></tr>
+    <tr><td>Commit</td><td>Summary + Commit to [branch] (bottom-left)</td></tr>
+    <tr><td>Push</td><td>Push origin (top bar)</td></tr>
+    <tr><td>Merge</td><td>Branch &rarr; Merge into Current Branch</td></tr>
+    <tr><td>Open folder</td><td>Repository &rarr; Show in Finder/Explorer</td></tr>
+    <tr><td>Open terminal</td><td>Repository &rarr; Open in Terminal</td></tr>
+  </table>
+
+  <h3><span class="pill pill-local">Local</span> Connect to Your Server</h3>
+  <pre><span class="prompt">$</span> ssh yourRCSid@yourFQDN</pre>
+
+  <h3><span class="pill pill-ssh">SSH &bull; Azure VM</span> Commands (after connecting)</h3>
+  <pre><span class="comment"># Git (always as www-data)</span>
+<span class="prompt">$</span> sudo -u www-data git pull origin main
+
+<span class="comment"># File operations</span>
+<span class="prompt">$</span> sudo mv source destination
+<span class="prompt">$</span> sudo cp source destination
+<span class="prompt">$</span> sudo chown -R www-data:www-data /var/www/html/iit
+
+<span class="comment"># SSL</span>
+<span class="prompt">$</span> sudo certbot --apache -d YOUR_FQDN
+<span class="prompt">$</span> sudo certbot renew --dry-run
+
+<span class="comment"># Debugging</span>
+<span class="prompt">$</span> sudo tail -20 /var/log/apache2/error.log
+<span class="prompt">$</span> sudo tail -20 /var/log/deploy.log</pre>
+
+  <h3><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span> Azure CLI</h3>
+  <pre><span class="prompt">$</span> az login
+<span class="prompt">$</span> az vm start --resource-group student-dtlab --name yourVMname
+<span class="prompt">$</span> az vm deallocate --resource-group student-dtlab --name yourVMname
+<span class="prompt">$</span> az vm show -d --resource-group student-dtlab --name yourVMname --query "powerState" -o tsv</pre>
+
+  <h3><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span> Git</h3>
+  <pre><span class="prompt">$</span> git checkout main && git pull origin main
+<span class="prompt">$</span> git checkout -b lab10
+<span class="prompt">$</span> git add . && git commit -m "message"
+<span class="prompt">$</span> git push origin lab10
+<span class="prompt">$</span> git checkout main && git merge lab10 && git push origin main</pre>
+
+  <div class="page-nav">
+    <span></span>
+    <a href="part1-deploy.html">Start Part 1 &rarr;</a>
+  </div>
+
+</body>
+</html>

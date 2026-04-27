@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Lab 10 &middot; Part 1 - Deploy to Production</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Lab 10 &middot; Part 1 &mdash; Deploy to Production</h1>
+  <p><strong>ITWS 1100</strong> &mdash; <a href="index.html">Lab 10 Overview</a></p>
+
+  <nav class="lab-nav">
+    <a href="index.html">Overview</a>
+    <a href="part1-deploy.html" class="active">1 &middot; Deploy</a>
+    <a href="part2-security.html">2 &middot; Security</a>
+    <a href="part3-ssl.html">3 &middot; SSL</a>
+    <a href="part4-autodeploy.html">4 &middot; Auto-Deploy</a>
+  </nav>
+
+  <div class="overview-box">
+    <h3 style="margin-top:0">Goal</h3>
+    <p>Prepare your code locally, push to GitHub, deploy to your Azure VM, and set up the landing page redirect so
+      <code>http://yourFQDN</code> goes straight to your homepage.</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- PREPARE LOCALLY -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Prepare Your Code Locally</h2>
+    <p>Branch, create the redirect, update listings, merge</p>
+  </div>
+
+  <h3>Step 1.1 &mdash; Create a lab10 branch</h3>
+  <div class="options">
+    <div class="options-label">Choose your method</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-ghdesktop">GitHub Desktop</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+      <button><span class="option-letter option-letter-c">C</span> Try with AI</button>
+    </div>
+    <div class="option-panel active">
+      <ol>
+        <li>Make sure your <strong>ITWS1100-yourRCSid</strong> repo is selected and you&rsquo;re on <strong>main</strong></li>
+        <li>Click <strong>Fetch origin</strong></li>
+        <li><strong>Branch</strong> &rarr; <strong>New Branch</strong> &rarr; name it <code>lab10</code> &rarr; <strong>Create Branch</strong></li>
+      </ol>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> git checkout main && git pull origin main && git checkout -b lab10</pre>
+    </div>
+    <div class="option-panel">
+      <div class="ai-prompt">
+        <div class="ai-prompt-header"><span class="ai-prompt-label">Try with AI</span></div>
+        <p>Open Claude Code, Copilot Chat, or ChatGPT and ask:</p>
+        <span class="ai-quote">&ldquo;I have a GitHub repo called ITWS1100-myRCSid. I&rsquo;m using [GitHub Desktop / the command line]. How do I create a new branch called lab10 from main, making sure I have the latest changes first?&rdquo;</span>
+      </div>
+    </div>
+  </div>
+  <div class="checkpoint">Branch dropdown (or <code>git branch</code>) shows <code>lab10</code>.</div>
+
+  <h3>Step 1.2 &mdash; Create the lab10 folder and redirect file</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Open your repo folder (<strong>Repository</strong> &rarr; <strong>Show in Finder/Explorer</strong> in GitHub Desktop, or just navigate to it). Create a <code>lab10</code> folder. Inside it, create <code>index.php</code> with:</p>
+  <pre><span class="highlight">&lt;?php</span>
+<span class="comment">// header() sends a server-level 302 redirect before any HTML loads</span>
+<span class="comment">// This MUST be the very first thing in the file - no whitespace above</span>
+header("Location: /iit/");
+exit;
+<span class="highlight">?&gt;</span></pre>
+
+  <div class="ai-prompt">
+    <div class="ai-prompt-header"><span class="ai-prompt-label">Try with AI</span></div>
+    <p>Use Claude Code, Copilot, or ChatGPT to generate this file for you:</p>
+    <span class="ai-quote">&ldquo;Write me a PHP file called index.php that does a 302 redirect to /iit/ using the header() function. Add a comment explaining why header() must come before any output.&rdquo;</span>
+    <p>Compare what the AI gives you to the code above. Does it match? Did it add anything extra?</p>
+  </div>
+
+  <h3>Step 1.3 &mdash; Update your JSON project listings</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Open your JSON file from Lab 8 and add entries for Lab 9 and Lab 10.</p>
+  <div class="ref-back">See <strong>Lab 8</strong> for the JSON structure and how your JavaScript reads it.</div>
+
+  <h3>Step 1.4 &mdash; Add a README for lab10</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Create <code>lab10/README.md</code>. Include your FQDN and GitHub repo link.</p>
+
+  <h3>Step 1.5 &mdash; Commit and push</h3>
+  <div class="options">
+    <div class="options-label">Choose your method</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-ghdesktop">GitHub Desktop</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+      <button><span class="option-letter option-letter-c">C</span> Try with AI</button>
+    </div>
+    <div class="option-panel active">
+      <ol>
+        <li>Review your changes in the <strong>Changes</strong> panel</li>
+        <li>Summary: <code>lab10: add redirect and update project listings</code></li>
+        <li><strong>Commit to lab10</strong> &rarr; <strong>Push origin</strong></li>
+      </ol>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> git add . && git commit -m "lab10: add redirect and update project listings"
+<span class="prompt">$</span> git push origin lab10</pre>
+    </div>
+    <div class="option-panel">
+      <div class="ai-prompt">
+        <div class="ai-prompt-header"><span class="ai-prompt-label">Try with AI</span></div>
+        <span class="ai-quote">&ldquo;I made changes in my lab10 branch. How do I commit all my changes with the message &lsquo;lab10: add redirect and update project listings&rsquo; and push to GitHub using [GitHub Desktop / the command line]?&rdquo;</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Step 1.6 &mdash; Merge into main</h3>
+  <div class="options">
+    <div class="options-label">Choose your method</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-ghdesktop">GitHub Desktop</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+      <button><span class="option-letter option-letter-c">C</span> Try with AI</button>
+    </div>
+    <div class="option-panel active">
+      <ol>
+        <li>Switch to <strong>main</strong> via the branch dropdown</li>
+        <li><strong>Branch</strong> &rarr; <strong>Merge into Current Branch</strong> &rarr; select <strong>lab10</strong></li>
+        <li><strong>Push origin</strong></li>
+      </ol>
+      <p>Or merge on GitHub.com via a Pull Request (click the &ldquo;Compare &amp; pull request&rdquo; banner after pushing your branch).</p>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> git checkout main && git merge lab10 && git push origin main</pre>
+    </div>
+    <div class="option-panel">
+      <div class="ai-prompt">
+        <div class="ai-prompt-header"><span class="ai-prompt-label">Try with AI</span></div>
+        <span class="ai-quote">&ldquo;I finished my work on the lab10 branch. How do I merge it into main and push to GitHub using [GitHub Desktop / the command line / a Pull Request on GitHub.com]?&rdquo;</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> On GitHub.com, the <code>main</code>
+    branch should show your <code>lab10/</code> folder and updated JSON file.</div>
+
+  <!-- ============================================================ -->
+  <!-- DEPLOY TO SERVER -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Deploy to Your Server</h2>
+    <p>Pull code, set up landing page, clean up</p>
+  </div>
+
+  <h3>Step 1.7 &mdash; Start your VM</h3>
+  <div class="options">
+    <div class="options-label">Choose your method</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-azure">Azure Portal</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+      <button><span class="option-letter option-letter-c">C</span> Try with AI</button>
+    </div>
+    <div class="option-panel active">
+      <p>Navigate to your VM on <a href="https://portal.azure.com">portal.azure.com</a> and click
+        <strong>Start</strong> if it&rsquo;s stopped.</p>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> az login
+<span class="prompt">$</span> az vm start --resource-group student-dtlab --name <span class="highlight">yourRCSidRPI</span>
+<span class="prompt">$</span> az vm show -d --resource-group student-dtlab --name <span class="highlight">yourRCSidRPI</span> --query "powerState" -o tsv</pre>
+    </div>
+    <div class="option-panel">
+      <div class="ai-prompt">
+        <div class="ai-prompt-header"><span class="ai-prompt-label">Try with AI</span></div>
+        <span class="ai-quote">&ldquo;How do I install the Azure CLI on [macOS/Windows]? I want to start, stop, and check the status of a VM named [yourRCSidRPI] in resource group student-dtlab from the command line.&rdquo;</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Step 1.8 &mdash; SSH in and pull your code</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Open a terminal (GitHub Desktop: <strong>Repository</strong> &rarr; <strong>Open in Terminal</strong>). Connect to your server:</p>
+  <pre><span class="prompt">$</span> ssh <span class="highlight">yourRCSid</span>@<span class="highlight">yourRCSidRPI</span>.eastus.cloudapp.azure.com</pre>
+
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <p>Once connected, pull your code:</p>
+  <pre><span class="prompt">$</span> cd /var/www/html/iit
+<span class="prompt">$</span> sudo -u www-data git pull origin main</pre>
+
+  <div class="ref-back">Remember: always <code>sudo -u www-data</code> for git on the server.
+    See <strong>Lab 1, Tutorial 4</strong> (GitHub and Azure) for why.</div>
+
+  <div class="checkpoint">Run <code>ls lab10/</code> &mdash; you should see <code>index.php</code> and
+    <code>README.md</code>.</div>
+
+  <h3>Step 1.9 &mdash; Set up the landing page redirect</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <p>Replace the default Apache page with your redirect so <code>yourFQDN</code> goes to your homepage.</p>
+  <pre><span class="prompt">$</span> cd /var/www/html
+<span class="prompt">$</span> sudo mv index.html index.html.shipped      <span class="comment"># Backup the default page</span>
+<span class="prompt">$</span> sudo cp iit/lab10/index.php ./index.php     <span class="comment"># Your redirect takes its place</span>
+<span class="prompt">$</span> sudo chown www-data:www-data index.php</pre>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> In a <strong>private</strong> window,
+    go to <code>http://yourFQDN</code> (no <code>/iit</code>). Should redirect to your homepage.</div>
+
+  <h3>Step 1.10 &mdash; Clean up your repo</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Open your repo folder. Move any <code>inclass</code>, <code>quiz</code>, and <code>.zip</code> files
+    <strong>out</strong> of your repo to a backup folder on your Desktop. These don&rsquo;t belong on a production
+    site.</p>
+
+  <h3>Step 1.11 &mdash; Commit the cleanup and deploy</h3>
+  <div class="options">
+    <div class="options-label">Choose your method to commit &amp; push</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-ghdesktop">GitHub Desktop</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+    </div>
+    <div class="option-panel active">
+      <ol>
+        <li>Review deleted files in <strong>Changes</strong></li>
+        <li>Summary: <code>lab10: clean up inclass, quiz, and zip files</code></li>
+        <li><strong>Commit to main</strong> &rarr; <strong>Push origin</strong></li>
+      </ol>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> git add -A && git commit -m "lab10: clean up inclass, quiz, and zip files"
+<span class="prompt">$</span> git push origin main</pre>
+    </div>
+  </div>
+
+  <p>Then pull on the server:</p>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> cd /var/www/html/iit
+<span class="prompt">$</span> sudo -u www-data git pull origin main</pre>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> Full site test (private window):
+    <ul>
+      <li><code>http://yourFQDN</code> &rarr; redirects to homepage</li>
+      <li>Projects page shows all labs</li>
+      <li>Lab 7 links to group project</li>
+    </ul>
+  </div>
+
+  <div class="page-nav">
+    <a href="index.html">&larr; Overview</a>
+    <a href="part2-security.html">Part 2: Security &rarr;</a>
+  </div>
+
+  <script src="tabs.js"></script>
+</body>
+</html>

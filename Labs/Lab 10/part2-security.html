@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Lab 10 &middot; Part 2 - Secure Your Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Lab 10 &middot; Part 2 &mdash; Secure Your Site</h1>
+  <p><strong>ITWS 1100</strong> &mdash; <a href="index.html">Lab 10 Overview</a></p>
+
+  <nav class="lab-nav">
+    <a href="index.html">Overview</a>
+    <a href="part1-deploy.html">1 &middot; Deploy</a>
+    <a href="part2-security.html" class="active">2 &middot; Security</a>
+    <a href="part3-ssl.html">3 &middot; SSL</a>
+    <a href="part4-autodeploy.html">4 &middot; Auto-Deploy</a>
+  </nav>
+
+  <div class="overview-box">
+    <h3 style="margin-top:0">Goal</h3>
+    <p>Reorganize your <code>.htaccess</code> security from protecting the entire site to protecting only specific folders.
+      Add a <code>secure</code> flag to your JSON and show lock icons on your projects page so visitors know which labs
+      require a password.</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- HTACCESS -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Reorganize .htaccess Security</h2>
+    <p>Move from blanket protection to per-folder security</p>
+  </div>
+
+  <p>Your <code>.htaccess</code> in <code>iit/</code> currently protects the <em>entire</em> site. We need it only
+    on folders with sensitive content. An <code>.htaccess</code> file protects the folder it&rsquo;s in and
+    everything below it &mdash; this is called <strong>cascading</strong>.</p>
+
+  <div class="ref-back">See <strong>Lab 1, Tutorial 3</strong> for how <code>.htaccess</code> and
+    <code>.htpasswd</code> work together.</div>
+
+  <h3>Step 2.1 &mdash; Move .htaccess out of the root</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> cd /var/www/html/iit
+<span class="prompt">$</span> sudo mv .htaccess lab10/.htaccess.original</pre>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> <code>http://yourFQDN/iit/</code>
+    should load <strong>without</strong> a password prompt now.</div>
+
+  <h3>Step 2.2 &mdash; Protect specific folders</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <p>Copy <code>.htaccess</code> into each folder that should require a password.
+    At minimum, protect <code>lab01</code> and <code>lab09</code>:</p>
+  <pre><span class="prompt">$</span> sudo cp lab10/.htaccess.original lab01/.htaccess
+<span class="prompt">$</span> sudo cp lab10/.htaccess.original lab09/.htaccess
+<span class="comment"># Add more folders as needed</span>
+<span class="prompt">$</span> sudo chown -R www-data:www-data /var/www/html/iit</pre>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> (private window):
+    <ul>
+      <li><code>/iit/</code> &mdash; no password</li>
+      <li><code>/iit/lab02/</code> &mdash; no password</li>
+      <li><code>/iit/lab01/</code> &mdash; asks for password</li>
+      <li><code>/iit/lab09/</code> &mdash; asks for password</li>
+    </ul>
+  </div>
+
+  <div class="ai-prompt">
+    <div class="ai-prompt-header">
+      <span class="ai-prompt-label">Try with AI</span>
+    </div>
+    <p>If you get &ldquo;Internal Server Error&rdquo; after moving <code>.htaccess</code>:</p>
+    <span class="ai-quote">&ldquo;I moved my Apache .htaccess file from /var/www/html/iit/ into /var/www/html/iit/lab01/ and now I get a 500 error when visiting that folder. Show me how to check the Apache error log and fix common .htaccess issues on Ubuntu 22.04.&rdquo;</span>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- JSON SECURE FLAG -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>JSON Secure Flag &amp; Lock Icons</h2>
+    <p>Mark secured labs in your data and show it on the projects page</p>
+  </div>
+
+  <p>Now that certain folders are password-protected on the server, you need to tell <em>visitors</em> which ones
+    require a password. You&rsquo;ll do this by adding a <code>secure</code> field to your JSON data and updating
+    your JavaScript to show a lock icon.</p>
+
+  <h3>Step 2.3 &mdash; Add the <code>secure</code> field to your JSON</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Open your JSON file from Lab 8 (e.g., <code>menuItems.json</code> or whatever you named yours).
+    Add a <code>"secure"</code> field to <strong>every entry</strong> &mdash; not just the new ones.</p>
+
+  <h4>File: <code>menuItems.json</code> (your filename may differ)</h4>
+  <pre>{
+  "menuItem": [
+    {
+      "menuName": "Lab 1",
+      "menuDesc": "Azure &amp; GitHub Setup",
+      "menuURL": "lab01/",
+      <span class="highlight">"secure": true</span>
+    },
+    {
+      "menuName": "Lab 2",
+      "menuDesc": "HTML Resume",
+      "menuURL": "lab02/",
+      <span class="highlight">"secure": false</span>
+    },
+    <span class="comment">... all your other labs ...</span>
+    {
+      "menuName": "Lab 9",
+      "menuDesc": "PHP &amp; MySQL",
+      "menuURL": "lab09/",
+      <span class="highlight">"secure": true</span>
+    },
+    {
+      "menuName": "Lab 10",
+      "menuDesc": "Production Deployment",
+      "menuURL": "lab10/",
+      <span class="highlight">"secure": false</span>
+    }
+  ]
+}</pre>
+
+  <div class="ref-back">Your field names may be different (<code>a</code>, <code>b</code>, <code>c</code> or
+    <code>menuName</code>, <code>menuDesc</code>, <code>menuURL</code>) &mdash; use whatever names you already have.
+    Just add <code>"secure"</code> to each entry.</div>
+
+  <div class="warning">The folders you protect with <code>.htaccess</code> (Step 2.2) must match the entries you mark
+    <code>"secure": true</code> here. They work together: the JSON flag shows the lock icon on your projects page,
+    and the <code>.htaccess</code> file enforces the actual password on the server.</div>
+
+  <h3>Step 2.4 &mdash; Show lock icons on the projects page</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Open the external JavaScript file that reads your JSON and builds the projects page (from Lab 8 &mdash;
+    e.g., <code>lab8.js</code>). You need to modify the part where it builds each list item to check the
+    <code>secure</code> field and add a lock icon.</p>
+
+  <h4>File: <code>lab8.js</code> (your filename may differ)</h4>
+  <p>Find the line where you build the <code>&lt;li&gt;</code> for each menu item. It probably looks something like this:</p>
+  <pre><span class="comment">// Your current code (approximately)</span>
+$.each(responseData.menuItem, function(i, item) {
+  menuli += '&lt;li&gt;&lt;a href="' + item.menuURL + '"&gt;';
+  menuli += item.menuName + '&lt;/a&gt; ';
+  menuli += '&lt;span class="description"&gt;' + item.menuDesc + '&lt;/span&gt;';
+  menuli += '&lt;/li&gt;';
+});</pre>
+
+  <p>Add a check for <code>item.secure</code> and insert a lock icon when it&rsquo;s <code>true</code>:</p>
+  <pre><span class="comment">// Updated code with lock icon</span>
+$.each(responseData.menuItem, function(i, item) {
+  <span class="highlight">var lockIcon = item.secure ? ' &#x1F512;' : '';</span>
+  menuli += '&lt;li&gt;&lt;a href="' + item.menuURL + '"';
+  <span class="highlight">if (item.secure) {</span>
+  <span class="highlight">  menuli += ' title="Password required"';</span>
+  <span class="highlight">}</span>
+  menuli += '&gt;';
+  menuli += item.menuName + <span class="highlight">lockIcon</span> + '&lt;/a&gt; ';
+  menuli += '&lt;span class="description"&gt;' + item.menuDesc + '&lt;/span&gt;';
+  menuli += '&lt;/li&gt;';
+});</pre>
+
+  <p>This adds a lock emoji (&#x1F512;) next to the project name and a &ldquo;Password required&rdquo; tooltip
+    when hovering over secured links.</p>
+
+  <div class="ai-prompt">
+    <div class="ai-prompt-header">
+      <span class="ai-prompt-label">Try with AI</span>
+    </div>
+    <p>If your code looks different from the example above, give the AI <strong>your actual file</strong> and ask
+      it to add the feature:</p>
+    <span class="ai-quote">&ldquo;Here is my JavaScript file (lab8.js) that reads a JSON file and builds project list items on my page. I added a "secure" boolean field to each JSON entry. Modify my code so that when secure is true, it shows a lock icon (&#x1F512;) next to the project name and adds a title attribute that says "Password required". Here is my current code: [paste your JS file]&rdquo;</span>
+    <p>Review what the AI produces. Make sure it doesn&rsquo;t break your existing layout. Test locally before committing.</p>
+  </div>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> Open your projects page locally.
+    Labs marked <code>"secure": true</code> should show &#x1F512; next to the name. Hover over them to see
+    &ldquo;Password required.&rdquo;</div>
+
+  <h3>Step 2.5 &mdash; Commit, push, and deploy</h3>
+  <div class="options">
+    <div class="options-label">Choose your method to commit &amp; push</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-ghdesktop">GitHub Desktop</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+    </div>
+    <div class="option-panel active">
+      <ol>
+        <li>Review changes in the <strong>Changes</strong> panel</li>
+        <li>Summary: <code>lab10: add secure flag and lock icons to project listings</code></li>
+        <li><strong>Commit to main</strong> &rarr; <strong>Push origin</strong></li>
+      </ol>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> git add -A && git commit -m "lab10: add secure flag and lock icons to project listings"
+<span class="prompt">$</span> git push origin main</pre>
+    </div>
+  </div>
+
+  <p>Then pull on the server:</p>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> cd /var/www/html/iit
+<span class="prompt">$</span> sudo -u www-data git pull origin main</pre>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span> Full security test (private window):
+    <ul>
+      <li><code>/iit/</code> &mdash; no password, homepage loads</li>
+      <li>Projects page shows lock icons on secured labs (Lab 1, Lab 9, etc.)</li>
+      <li>Clicking a locked lab prompts for password</li>
+      <li>Clicking an unlocked lab loads without password</li>
+    </ul>
+  </div>
+
+  <div class="page-nav">
+    <a href="part1-deploy.html">&larr; Part 1: Deploy</a>
+    <a href="part3-ssl.html">Part 3: SSL &rarr;</a>
+  </div>
+
+  <script src="tabs.js"></script>
+</body>
+</html>

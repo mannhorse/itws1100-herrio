@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Lab 10 &middot; Part 4 - Auto-Deploy Workflow</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Lab 10 &middot; Part 4 &mdash; Auto-Deploy Workflow</h1>
+  <p><strong>ITWS 1100</strong> &mdash; <a href="index.html">Lab 10 Overview</a></p>
+
+  <nav class="lab-nav">
+    <a href="index.html">Overview</a>
+    <a href="part1-deploy.html">1 &middot; Deploy</a>
+    <a href="part2-security.html">2 &middot; Security</a>
+    <a href="part3-ssl.html">3 &middot; SSL</a>
+    <a href="part4-autodeploy.html" class="active">4 &middot; Auto-Deploy</a>
+  </nav>
+
+  <div class="overview-box">
+    <h3 style="margin-top:0">Goal</h3>
+    <p>Set up <strong>Continuous Deployment</strong> so that when you push to GitHub, your server automatically
+      pulls the latest code. No more SSH &rarr; <code>git pull</code> every time you make a change.</p>
+  </div>
+
+  <p>The flow:</p>
+  <ol>
+    <li>You push to GitHub (as normal via GitHub Desktop)</li>
+    <li>GitHub POSTs a webhook to a URL on your server</li>
+    <li>Your server verifies the request with a shared secret (HMAC-SHA256), then runs <code>git pull</code></li>
+  </ol>
+  <p>This is the same concept behind GitHub Actions, Jenkins, and other CI/CD systems used in industry.</p>
+
+  <!-- ============================================================ -->
+  <!-- DEPLOY SCRIPT -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Create the Webhook Handler</h2>
+    <p>A PHP script that receives GitHub pushes and deploys</p>
+  </div>
+
+  <h3>Step 4.1 &mdash; Generate a secret</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> openssl rand -hex 16</pre>
+  <p>Copy the output &mdash; this is your webhook secret. You&rsquo;ll use it in both the PHP script and
+    on GitHub.</p>
+
+  <div class="warning"><strong>Save this secret somewhere safe.</strong> You&rsquo;ll need it for Step 4.3
+    (GitHub webhook configuration).</div>
+
+  <h3>Step 4.2 &mdash; Create <code>deploy.php</code></h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+
+  <div class="ai-prompt">
+    <div class="ai-prompt-header">
+      <span class="ai-prompt-label">Try with AI</span>
+    </div>
+    <p>Have the AI write this script for you. Give it the exact requirements:</p>
+    <span class="ai-quote">&ldquo;Write a PHP webhook handler called deploy.php for GitHub. It should: (1) verify the X-Hub-Signature-256 header using a shared secret with hash_hmac, (2) only deploy on pushes to the main branch by checking the ref field in the JSON payload, (3) run git pull origin main as www-data in /var/www/html/iit, (4) log every attempt (success or failure) to /var/log/deploy.log with a timestamp. Return 403 for bad signatures and 200/500 for success/failure.&rdquo;</span>
+    <p><strong>Review the code the AI gives you.</strong> Verify it checks the signature <em>before</em> doing
+      anything else. Compare it to the reference implementation below.</p>
+  </div>
+
+  <pre><span class="prompt">$</span> sudo nano /var/www/html/deploy.php</pre>
+
+  <p>Reference implementation (your AI-generated version should look similar):</p>
+  <pre><span class="highlight">&lt;?php</span>
+<span class="comment">// GitHub Webhook Auto-Deploy</span>
+
+$secret   = '<span class="highlight">YOUR_SECRET_HERE</span>';  <span class="comment">// Replace with your secret from Step 4.1</span>
+$repoPath = '/var/www/html/iit';
+$logFile  = '/var/log/deploy.log';
+
+<span class="comment">// Verify GitHub's HMAC-SHA256 signature</span>
+$signature = $_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? '';
+$payload   = file_get_contents('php://input');
+$expected  = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+
+if (!hash_equals($expected, $signature)) {
+    http_response_code(403);
+    file_put_contents($logFile, date('Y-m-d H:i:s') . " REJECTED: invalid signature\n", FILE_APPEND);
+    die('Invalid signature');
+}
+
+<span class="comment">// Only deploy pushes to main</span>
+$data   = json_decode($payload, true);
+$branch = $data['ref'] ?? '';
+
+if ($branch !== 'refs/heads/main') {
+    file_put_contents($logFile, date('Y-m-d H:i:s') . " SKIPPED: push to $branch\n", FILE_APPEND);
+    die('Not main branch');
+}
+
+<span class="comment">// Deploy</span>
+$output = [];
+$code   = 0;
+exec("cd $repoPath &amp;&amp; sudo -u www-data git pull origin main 2>&amp;1", $output, $code);
+
+$result = implode("\n", $output);
+$status = $code === 0 ? 'SUCCESS' : 'FAILED';
+file_put_contents($logFile, date('Y-m-d H:i:s') . " $status: $result\n", FILE_APPEND);
+
+http_response_code($code === 0 ? 200 : 500);
+echo $status;
+<span class="highlight">?&gt;</span></pre>
+
+  <p>Replace <code>YOUR_SECRET_HERE</code> with the secret you generated in Step 4.1.</p>
+
+  <h3>Step 4.3 &mdash; Set file permissions and create the log</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> sudo chown www-data:www-data /var/www/html/deploy.php
+<span class="prompt">$</span> sudo chmod 640 /var/www/html/deploy.php
+<span class="prompt">$</span> sudo touch /var/log/deploy.log
+<span class="prompt">$</span> sudo chown www-data:www-data /var/log/deploy.log</pre>
+
+  <!-- ============================================================ -->
+  <!-- SUDOERS -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Configure Server Permissions</h2>
+    <p>Allow Apache to run git pull &mdash; and nothing else</p>
+  </div>
+
+  <h3>Step 4.4 &mdash; Configure sudoers for www-data</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <p>Apache (running as <code>www-data</code>) needs permission to run <code>git pull</code> without a password
+    prompt. We grant <em>only</em> that command &mdash; nothing else. This is the
+    <strong>principle of least privilege</strong>.</p>
+  <pre><span class="prompt">$</span> sudo visudo -f /etc/sudoers.d/www-data-git</pre>
+  <p>Add this single line:</p>
+  <pre>www-data ALL=(www-data) NOPASSWD: /usr/bin/git pull*</pre>
+  <p>Save: <code>Ctrl+O</code>, <code>Enter</code>, <code>Ctrl+X</code>.</p>
+
+  <!-- ============================================================ -->
+  <!-- GITHUB WEBHOOK -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Connect GitHub to Your Server</h2>
+    <p>Add the webhook and test the full pipeline</p>
+  </div>
+
+  <h3>Step 4.5 &mdash; Add the webhook on GitHub</h3>
+  <div class="pill-row"><span class="pill pill-browser">Browser</span></div>
+  <ol>
+    <li>Your repo on GitHub.com &rarr; <strong>Settings</strong> &rarr; <strong>Webhooks</strong> &rarr;
+      <strong>Add webhook</strong></li>
+    <li><strong>Payload URL</strong>: <code>https://yourFQDN/deploy.php</code></li>
+    <li><strong>Content type</strong>: <code>application/json</code></li>
+    <li><strong>Secret</strong>: paste the secret from Step 4.1</li>
+    <li><strong>SSL verification</strong>: Enable (this works because you set up SSL in Part 3)</li>
+    <li><strong>Events</strong>: &ldquo;Just the push event&rdquo;</li>
+    <li>Click <strong>Add webhook</strong></li>
+  </ol>
+
+  <h3>Step 4.6 &mdash; Test auto-deploy</h3>
+  <div class="pill-row"><span class="pill pill-local">Local</span></div>
+  <p>Create a file <code>lab10/deploy-test.txt</code> with any content (e.g., &ldquo;Auto-deploy works!&rdquo;).</p>
+
+  <div class="options">
+    <div class="options-label">Choose your method to commit &amp; push</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-ghdesktop">GitHub Desktop</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+    </div>
+    <div class="option-panel active">
+      <ol>
+        <li>Summary: <code>lab10: test auto-deploy</code></li>
+        <li><strong>Commit to main</strong> &rarr; <strong>Push origin</strong></li>
+      </ol>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="prompt">$</span> git add lab10/deploy-test.txt && git commit -m "lab10: test auto-deploy"
+<span class="prompt">$</span> git push origin main</pre>
+    </div>
+  </div>
+
+  <p>Wait ~10 seconds, then verify:</p>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> cat /var/www/html/iit/lab10/deploy-test.txt    <span class="comment"># Should show your content</span>
+<span class="prompt">$</span> cat /var/log/deploy.log                         <span class="comment"># Should show SUCCESS</span></pre>
+
+  <div class="checkpoint">The file appeared on your server <strong>without you running git pull</strong>. On
+    GitHub.com, <strong>Settings &rarr; Webhooks &rarr; Recent Deliveries</strong> shows a green checkmark.</div>
+
+  <div class="ai-prompt">
+    <div class="ai-prompt-header">
+      <span class="ai-prompt-label">Try with AI</span>
+    </div>
+    <p>If the webhook isn&rsquo;t working, give the AI your symptoms:</p>
+    <span class="ai-quote">&ldquo;My GitHub webhook to https://myFQDN/deploy.php is returning [403/500/timeout]. The deploy.log shows [paste log contents]. My deploy.php uses hash_hmac to verify X-Hub-Signature-256. I'm running Apache on Ubuntu 22.04. Help me debug this step by step.&rdquo;</span>
+    <p>The more specific you are about the error, the better the AI can help.</p>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- FINAL VERIFICATION -->
+  <!-- ============================================================ -->
+
+  <div class="part-header">
+    <h2>Final Verification &amp; Submission</h2>
+    <p>Test everything, then submit</p>
+  </div>
+
+  <h3>Step 4.7 &mdash; Final checklist</h3>
+  <div class="pill-row"><span class="pill pill-browser">Browser</span></div>
+  <p>Open a <strong>private/incognito</strong> window and run through every test:</p>
+  <table class="rubric-table">
+    <tr><th>Test</th><th>Expected</th><th>&check;</th></tr>
+    <tr><td><code>https://yourFQDN</code></td><td>Redirects to homepage, no password</td><td></td></tr>
+    <tr><td>Projects page</td><td>Shows all labs; secured labs have lock icon</td><td></td></tr>
+    <tr><td>Lab 7 link</td><td>Goes to group project</td><td></td></tr>
+    <tr><td><code>https://yourFQDN/iit/lab01/</code></td><td>Asks for password</td><td></td></tr>
+    <tr><td><code>https://yourFQDN/iit/lab09/</code></td><td>Asks for password</td><td></td></tr>
+    <tr><td><code>https://yourFQDN/iit/lab02/</code></td><td>No password</td><td></td></tr>
+    <tr><td>Padlock icon in address bar</td><td>SSL valid</td><td></td></tr>
+    <tr><td><code>http://yourFQDN</code></td><td>Redirects to <code>https://</code></td><td></td></tr>
+    <tr><td>Push a change via GitHub Desktop</td><td>Appears on server within ~10s</td><td></td></tr>
+  </table>
+
+  <h3>Step 4.8 &mdash; Submit</h3>
+  <p>Go to your repo on GitHub.com, copy the URL, and submit it on LMS.</p>
+
+  <h3>Step 4.9 &mdash; (Optional) Stop your VM</h3>
+  <div class="options">
+    <div class="options-label">Choose your method</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-azure">Azure Portal</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+    </div>
+    <div class="option-panel active">
+      <p>Navigate to your VM on <a href="https://portal.azure.com">portal.azure.com</a> and click <strong>Stop</strong>.</p>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="comment"># deallocate stops billing (vm stop alone does NOT)</span>
+<span class="prompt">$</span> az vm deallocate --resource-group student-dtlab --name <span class="highlight">yourRCSidRPI</span></pre>
+    </div>
+  </div>
+
+  <div class="congrats">
+    <h3>Congratulations!</h3>
+    <p>You&rsquo;ve designed, coded, secured, and deployed your own web server with HTTPS and continuous deployment.
+      This is the same workflow professional developers use every day.</p>
+    <p>Keep experimenting &mdash; you&rsquo;ll use these servers in future ITWS classes.</p>
+  </div>
+
+  <div class="page-nav">
+    <a href="part3-ssl.html">&larr; Part 3: SSL</a>
+    <a href="index.html">Back to Overview</a>
+  </div>
+
+  <script src="tabs.js"></script>
+</body>
+</html>

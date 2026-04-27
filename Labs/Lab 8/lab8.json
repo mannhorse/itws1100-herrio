@@ -4,37 +4,64 @@
          "lab": "Lab 1",
          "title": "Intro",
          "description": "Setting up a personal server.",
-         "link": "../Lab 1/lab1.html"
+         "link": "../Lab 1/lab1.html",
+         "secure": true
       },
       {
          "lab": "Lab 2",
          "title": "Resume",
          "description": "Developing an HTML resume with external CSS styling.",
-         "link": "../Lab 2/herrio-OliverHerrick-resume.html"
+         "link": "../Lab 2/herrio-OliverHerrick-resume.html",
+         "secure": false
       },
       {
          "lab": "Lab 4",
          "title": "XML",
          "description": "Creating an RSS feed and applying an XML stylesheet.",
-         "link": "../Lab 4/lab4.html"
+         "link": "../Lab 4/lab4.html",
+         "secure": false
       },
       {
          "lab": "Lab 5",
          "title": "JavaScript",
          "description": "Building interactive elements with vanilla JavaScript.",
-         "link": "../Lab 5/lab5page.html"
+         "link": "../Lab 5/lab5page.html",
+         "secure": false
       },
       {
          "lab": "Lab 6",
          "title": "jQuery",
          "description": "Using jQuery to add interactivity to a web page.",
-         "link": "../Lab 6/lab6page.html"
+         "link": "../Lab 6/lab6page.html",
+         "secure": false
+      },
+      {
+         "lab": "Lab 7",
+         "title": "Group Project",
+         "description": "Collaborative web development project with a team.",
+         "link": "https://github.com/mannhorse/itws1100-herrio",
+         "secure": false
       },
       {
          "lab": "Lab 8",
          "title": "Dynamic Menu",
          "description": "Building a dynamic projects page with JSON and AJAX.",
-         "link": "lab8.html"
+         "link": "lab8.html",
+         "secure": false
+      },
+      {
+         "lab": "Lab 9",
+         "title": "PHP & MySQL",
+         "description": "Building dynamic pages with PHP and a MySQL database.",
+         "link": "../Lab 9/index.php",
+         "secure": true
+      },
+      {
+         "lab": "Lab 10",
+         "title": "Production Deployment",
+         "description": "Deploying to production with SSL and auto-deploy via GitHub webhooks.",
+         "link": "../Lab 10/lab10.html",
+         "secure": false
       }
    ]
 }
