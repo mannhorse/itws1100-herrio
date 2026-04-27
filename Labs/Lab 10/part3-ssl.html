@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Lab 10 &middot; Part 3 - SSL / HTTPS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Lab 10 &middot; Part 3 &mdash; SSL / HTTPS</h1>
+  <p><strong>ITWS 1100</strong> &mdash; <a href="index.html">Lab 10 Overview</a></p>
+
+  <nav class="lab-nav">
+    <a href="index.html">Overview</a>
+    <a href="part1-deploy.html">1 &middot; Deploy</a>
+    <a href="part2-security.html">2 &middot; Security</a>
+    <a href="part3-ssl.html" class="active">3 &middot; SSL</a>
+    <a href="part4-autodeploy.html">4 &middot; Auto-Deploy</a>
+  </nav>
+
+  <div class="overview-box">
+    <h3 style="margin-top:0">Goal</h3>
+    <p>Encrypt your site with HTTPS using a free Let&rsquo;s Encrypt certificate. After this part,
+      your site will show a padlock in the browser and all traffic &mdash; including the <code>.htaccess</code>
+      passwords from Part 2 &mdash; will be encrypted.</p>
+  </div>
+
+  <p>Without SSL, everything travels in plain text. Anyone on the same network could intercept the
+    passwords your visitors type into the <code>.htaccess</code> prompts. SSL encrypts the entire connection
+    between the browser and your server.</p>
+
+  <p>We&rsquo;ll use <strong>Certbot</strong> to get a free certificate from <strong>Let&rsquo;s Encrypt</strong>
+    and auto-configure Apache.</p>
+
+  <!-- ============================================================ -->
+  <!-- PORT 443 -->
+  <!-- ============================================================ -->
+
+  <h3>Step 3.1 &mdash; Open port 443 on Azure</h3>
+  <div class="options">
+    <div class="options-label">Choose your method</div>
+    <div class="options-tabs">
+      <button class="active"><span class="option-letter option-letter-a">A</span> <span class="pill pill-azure">Azure Portal</span></button>
+      <button><span class="option-letter option-letter-b">B</span> <span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></button>
+      <button><span class="option-letter option-letter-c">C</span> Try with AI</button>
+    </div>
+    <div class="option-panel active">
+      <p>Your VM &rarr; <strong>Networking</strong> &rarr; <strong>Network Settings</strong> &rarr;
+        <strong>Create port rule</strong> &rarr; <strong>Inbound port rule</strong>:</p>
+      <ul>
+        <li>Destination port: <code>443</code></li>
+        <li>Protocol: <strong>TCP</strong></li>
+        <li>Name: <code>Allow-HTTPS</code></li>
+      </ul>
+    </div>
+    <div class="option-panel">
+      <div class="pill-row"><span class="pill pill-cli">CLI</span> <span class="pill pill-local">Local</span></div>
+      <pre><span class="comment"># Find your NSG name, then add the rule</span>
+<span class="prompt">$</span> az network nsg list --resource-group student-dtlab --query "[].name" -o tsv
+<span class="prompt">$</span> az network nsg rule create \
+    --resource-group student-dtlab \
+    --nsg-name <span class="highlight">NSG_NAME</span> \
+    --name Allow-HTTPS \
+    --priority 1010 \
+    --destination-port-ranges 443 \
+    --protocol TCP --access Allow</pre>
+    </div>
+    <div class="option-panel">
+      <div class="ai-prompt">
+        <div class="ai-prompt-header"><span class="ai-prompt-label">Try with AI</span></div>
+        <span class="ai-quote">&ldquo;I need to open port 443 (HTTPS) on my Azure VM. The VM is in resource group student-dtlab. Show me how to do it in [the Azure Portal / Azure CLI]. Include the NSG inbound rule settings.&rdquo;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- CERTBOT -->
+  <!-- ============================================================ -->
+
+  <h3>Step 3.2 &mdash; Install Certbot and get your certificate</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <pre><span class="prompt">$</span> sudo apt update
+<span class="prompt">$</span> sudo apt install -y certbot python3-certbot-apache
+<span class="prompt">$</span> sudo certbot --apache -d <span class="highlight">YOUR_FQDN</span></pre>
+
+  <p>Certbot will ask you a few questions:</p>
+  <ul>
+    <li><strong>Email:</strong> your RPI email (for renewal notices)</li>
+    <li><strong>Terms of service:</strong> agree</li>
+    <li><strong>Share email with EFF:</strong> your choice</li>
+  </ul>
+  <p>Certbot automatically configures Apache and sets up HTTP &rarr; HTTPS redirect.</p>
+
+  <div class="ai-prompt">
+    <div class="ai-prompt-header">
+      <span class="ai-prompt-label">Try with AI</span>
+    </div>
+    <p>If Certbot fails with &ldquo;Could not automatically find a matching server name&rdquo;:</p>
+    <span class="ai-quote">&ldquo;Certbot can't find my ServerName. I'm on Ubuntu 22.04 with the default Apache config. My FQDN is [yourFQDN]. Write me the exact commands to add ServerName to my Apache config and restart Apache so Certbot will work.&rdquo;</span>
+  </div>
+
+  <div class="checkpoint"><span class="pill pill-browser">Browser</span>
+    <ul>
+      <li><code>https://yourFQDN</code> &mdash; shows a padlock in the address bar</li>
+      <li><code>http://yourFQDN</code> &mdash; automatically redirects to <code>https://</code></li>
+    </ul>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- AUTO RENEWAL -->
+  <!-- ============================================================ -->
+
+  <h3>Step 3.3 &mdash; Verify auto-renewal</h3>
+  <div class="pill-row"><span class="pill pill-ssh">SSH &bull; Azure VM</span></div>
+  <p>Let&rsquo;s Encrypt certificates expire every 90 days. Certbot sets up a systemd timer to
+    automatically renew them. Verify it&rsquo;s working:</p>
+  <pre><span class="prompt">$</span> sudo certbot renew --dry-run
+<span class="prompt">$</span> sudo systemctl status certbot.timer</pre>
+
+  <div class="checkpoint">Dry run says &ldquo;all simulated renewals succeeded.&rdquo; Timer shows
+    <code>active (waiting)</code>.</div>
+
+  <div class="warning">Your VM must be <strong>running</strong> for auto-renewal to work. If your VM is stopped
+    when the certificate expires (90 days), you&rsquo;ll need to start it and run
+    <code>sudo certbot renew</code> manually.</div>
+
+  <div class="page-nav">
+    <a href="part2-security.html">&larr; Part 2: Security</a>
+    <a href="part4-autodeploy.html">Part 4: Auto-Deploy &rarr;</a>
+  </div>
+
+  <script src="tabs.js"></script>
+</body>
+</html>

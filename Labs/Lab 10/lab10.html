@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Oliver Herrick | Lab 10 - Production Deployment</title>
+   <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+   <nav>
+      <div class="logo">Oliver Herrick</div>
+      <ul>
+         <li><a href="../../index.html">Home</a></li>
+         <li><a href="../Labs.html">Labs</a></li>
+         <li><a href="../../index.html#about">About</a></li>
+         <li><a href="../../index.html#contact">Contact</a></li>
+      </ul>
+   </nav>
+
+   <header class="hero" style="padding: 40px 20px;">
+      <h1>Lab 10: Production Deployment</h1>
+      <p>Deploying to production with SSL and continuous auto-deploy.</p>
+   </header>
+
+   <main class="container">
+      <section>
+         <h2>About This Lab</h2>
+         <p>In this lab, I deployed my website to a live Azure virtual machine, configured HTTPS using
+            Let's Encrypt, set up per-folder password protection, and implemented continuous deployment
+            via a GitHub webhook so every push to main automatically updates the server.</p>
+
+         <h2>What Was Accomplished</h2>
+         <ul>
+            <li>Configured a PHP redirect so visiting <code>herriorpi.eastus.cloudapp.azure.com</code> redirects straight to the homepage</li>
+            <li>Protected Lab 1 and Lab 9 with <code>.htaccess</code> HTTP Basic Authentication</li>
+            <li>Added <code>secure</code> flags to the JSON project listings and lock icons to the projects page</li>
+            <li>Installed a free SSL/TLS certificate via Let's Encrypt (Certbot) with auto-renewal</li>
+            <li>Set up a GitHub webhook with HMAC-SHA256 signature verification for automatic deployment on push to main</li>
+         </ul>
+
+         <br>
+         <a href="index.html" class="btn">View Lab 10 Instructions</a>
+      </section>
+   </main>
+
+   <footer>
+      <p>&copy; 2026 Oliver Herrick. Built for Intro to ITWS.</p>
+   </footer>
+
+</body>
+</html>
